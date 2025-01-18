@@ -127,13 +127,13 @@ export const initPopups = () => {
       if (!response.ok) {
         throw new Error("User not found");
       }
-      const result = await response.json();
-      console.log(`Login successful: ${JSON.stringify(result)}`);
-      const { id, email } = result;
-      localStorage.setItem("user", JSON.stringify({ id, email }));
+
+      const { token } = await response.json();
+      localStorage.setItem("token", token);
       window.location.href = "/index.html";
+      console.log("Zalogowano pomyślnie, token zapisany:", token);
     } catch (error) {
-      console.error("Error during login:", error);
+      console.error("Błąd podczas logowania:", error);
     }
   }
 
@@ -149,13 +149,12 @@ export const initPopups = () => {
       if (!response.ok) {
         throw new Error("User is already in database");
       }
-      const result = await response.json();
-      console.log(`Register successful: ${JSON.stringify(result)}`);
-      const { id, email } = result;
-      localStorage.setItem("user", JSON.stringify({ id, email }));
+      const { token } = await response.json();
+      localStorage.setItem("token", token);
+      console.log("Rejestracja zakończona pomyślnie, token zapisany:", token);
       window.location.href = "/index.html";
     } catch (error) {
-      console.error("Error during register:", error);
+      console.error("Błąd podczas rejestracji:", error);
     }
   }
 };

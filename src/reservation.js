@@ -1,9 +1,15 @@
 export async function makeReservation(reservation) {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return;
+  }
   try {
     const response = await fetch("http://localhost:3000/cart/makeReservation", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(reservation),
     });
@@ -18,12 +24,30 @@ export async function makeReservation(reservation) {
   }
 }
 async function getReservations() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userID = user.id;
-  const response = await fetch(`http://localhost:3000/reservation/${userID}`);
-  const result = await response.json();
-  console.log(result);
-  return result;
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("Brak tokena. Użytkownik nie jest zalogowany.");
+    return [];
+  }
+  try {
+    const response = await fetch("http://localhost:3000/reservation/", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Nie udało się pobrać rezerwacji");
+    }
+
+    const result = await response.json();
+    console.log(result);
+    return result;
+  } catch (error) {
+    console.error("Błąd podczas pobierania rezerwacji:", error);
+    return [];
+  }
 }
 async function getCar(carID) {
   const response = await fetch(`http://localhost:3000/cars/${carID}`);
@@ -34,11 +58,9 @@ async function getCar(carID) {
 export async function displayUserPanel() {
   const content = document.getElementById("content");
 
-  // Pobranie listy rezerwacji użytkownika
   const reservations = await getReservations();
   console.log(reservations);
 
-  // Utworzenie panelu użytkownika
   const panel = document.createElement("div");
   panel.classList.add("panel");
 
@@ -55,7 +77,6 @@ export async function displayUserPanel() {
       "Nie masz żadnych aktywnych rezerwacji.";
     reservationList.appendChild(noReservationsMessage);
   } else {
-    // Dla każdej rezerwacji twórz kartę
     console.log(reservations);
     for (const reservation of reservations) {
       const carDetails = await getCar(reservation.car_id);
@@ -104,7 +125,6 @@ export async function displayUserPanel() {
 
   panel.appendChild(reservationList);
 
-  // Wyczyszczenie zawartości i dodanie nowego panelu
   content.innerHTML = "";
   content.appendChild(panel);
 }

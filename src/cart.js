@@ -1,53 +1,74 @@
 import { makeReservation } from "./reservation.js";
 
 export function cartItem(productID) {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userID = user.id;
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("Brak tokena. Użytkownik nie jest zalogowany.");
+    return;
+  }
   const data = {
-    userID: userID,
     productID: productID,
     quantity: 1,
   };
-  console.log(data);
-  addItemToCart(data);
+  console.log("Dane do dodania do koszyka:", data);
+  addItemToCart(data, token);
 }
-async function addItemToCart(data) {
+async function addItemToCart(data, token) {
   try {
     const response = await fetch("http://localhost:3000/add-to-cart", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
     });
-    const result = await response.json();
     if (!response.ok) {
-      console.error("Error ", result);
+      const error = await response.json();
+      console.error("Błąd podczas dodawania do koszyka:", error);
       return;
     }
-    console.log(`Login successful: ${JSON.stringify(result)}`);
+    const result = await response.json();
+    console.log("Produkt dodany do koszyka:", result);
   } catch (error) {
     console.error("Error:", error);
   }
 }
 async function getCart() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userID = user.id;
-  const response = await fetch(`http://localhost:3000/cart/${userID}`);
-  const result = await response.json();
-  return result;
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.error("Brak tokena. Użytkownik nie jest zalogowany.");
+    return;
+  }
+
+  try {
+    const response = await fetch("http://localhost:3000/cart", {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Nie udało się pobrać koszyka");
+    }
+
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    console.error("Błąd:", error);
+  }
 }
 export async function displayCart() {
   const content = document.getElementById("content");
 
-  // Kontener dla zawartości koszyka
   const cartContent = document.createElement("div");
   cartContent.classList.add("cartContent");
-  // Lista przedmiotów z koszyka
+
+  const token = localStorage.getItem("token");
+
   const cartItems = await getCart();
   console.log(cartItems);
 
-  // Sprawdzamy, czy są przedmioty w koszyku
   if (cartItems.length === 0) {
     const emptyMessage = document.createElement("p");
     emptyMessage.textContent = "Koszyk jest pusty.";
@@ -116,13 +137,9 @@ export async function displayCart() {
         return;
       }
 
-      const user = JSON.parse(localStorage.getItem("user"));
-      const userID = user.id;
-
       // Tworzymy rezerwację dla każdego przedmiotu z koszyka
       for (const item of cartItems) {
         await makeReservation({
-          userID: userID,
           carID: item.product_id,
           start_date: startDate,
           end_date: endDate,
@@ -176,11 +193,15 @@ async function deleteCartItem(productId) {
 }
 
 async function clearCart() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  const userID = user.id;
-
-  await fetch(`http://localhost:3000/cart/clear/${userID}`, {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    return;
+  }
+  await fetch(`http://localhost:3000/cart/clear`, {
     method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${token}`, // Dodanie tokena do nagłówków
+    },
   })
     .then((response) => {
       if (!response.ok) {

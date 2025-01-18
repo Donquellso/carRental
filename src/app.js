@@ -5,6 +5,8 @@ import { displayCart } from "./cart.js";
 import { displayUserPanel } from "./reservation.js";
 import { loadAbout } from "./about.js";
 import { loadContact } from "./contact.js";
+import { jwtDecode } from "jwt-decode";
+import "./css.css";
 document.addEventListener("DOMContentLoaded", initSite);
 function initSite() {
   initPopups();
@@ -22,12 +24,20 @@ function initButtons() {
     .getElementById("account")
     .addEventListener("click", displayUserPanel);
 }
+
 function checkUserStatus() {
-  const user = JSON.parse(localStorage.getItem("user"));
-  if (user) {
-    showLoggingState();
-  } else {
+  const token = localStorage.getItem("token");
+  if (!token) {
+    console.log("Użytkownik nie jest zalogowany.");
     return;
+  }
+  try {
+    const user = jwtDecode(token);
+    console.log(`Zalogowany użytkownik: ${user.email}`);
+    showLoggingState();
+  } catch (error) {
+    console.error("Błąd podczas weryfikacji tokena:", error);
+    localStorage.removeItem("token");
   }
 }
 function showLoggingState() {
@@ -40,6 +50,6 @@ function showLoggingState() {
 
 logout.addEventListener("click", userLogout);
 function userLogout() {
-  localStorage.removeItem("user");
+  localStorage.removeItem("token");
   window.location.href = "/index.html";
 }

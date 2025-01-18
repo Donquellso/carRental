@@ -3,6 +3,9 @@ import "dotenv/config";
 import mysql from "mysql2";
 import cors from "cors";
 
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+
 const app = express();
 app.use(cors());
 app.use(express.json());
@@ -36,61 +39,108 @@ app.get("/cars", (req, res) => {
 
 //LOGOWANIE I REJESTRACJA
 
-app.post("/login", (req, res) => {
-  const { email, password } = req.body;
-  console.log("Received login request:", req.body);
-  conn.query("SELECT * FROM USERS WHERE EMAIL = ?", [email], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Database error" });
-    }
-    if (result.length === 0) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
-    const user = result[0];
-    if (user.password !== password) {
-      return res.status(401).json({ error: "Invalid email or password" });
-    }
+// Middleware do weryfikacji tokena
+function authenticateToken(req, res, next) {
+  const authHeader = req.headers["authorization"]; // Pobierz nagłówek "Authorization"
+  const token = authHeader && authHeader.split(" ")[1]; // Usuń "Bearer" i pobierz sam token
 
-    return res.json({ id: user.id, email: user.email });
+  if (!token) return res.status(401).json({ error: "Brak tokena" }); // Jeśli brak tokena, zwróć 401
+
+  // Weryfikacja tokena za pomocą JWT_SECRET
+  jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
+    if (err) return res.status(403).json({ error: "Nieprawidłowy token" }); // Jeśli token jest niepoprawny, zwróć 403
+    req.user = user; // Przechowaj zweryfikowanego użytkownika w req.user
+    next(); // Przejdź do kolejnej funkcji
   });
+}
+
+export { authenticateToken };
+
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    conn.query(
+      "SELECT * FROM users WHERE email = ?",
+      [email],
+      async (err, result) => {
+        if (err) return res.status(500).send("Błąd serwera");
+
+        if (result.length === 0) {
+          return res
+            .status(401)
+            .json({ error: "Nieprawidłowy e-mail lub hasło" });
+        }
+
+        const user = result[0];
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+          return res
+            .status(401)
+            .json({ error: "Nieprawidłowy e-mail lub hasło" });
+        }
+
+        const token = jwt.sign(
+          { id: user.id, email: user.email },
+          process.env.JWT_SECRET,
+          {
+            expiresIn: "1h",
+          }
+        );
+
+        res.json({ token });
+      }
+    );
+  } catch (error) {
+    res.status(500).send("Wystąpił błąd serwera podczas logowania.");
+  }
 });
 app.post("/register", (req, res) => {
   const { email, password } = req.body;
   console.log("Received register request:", req.body);
-  conn.query("SELECT * FROM users WHERE email = ?", [email], (err, results) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).send("Błąd serwera");
-    }
-
-    if (results.length > 0) {
-      return res.status(400).send("Użytkownik o takim e-mailu już istnieje");
-    }
-    conn.query(
-      "INSERT INTO USERS (email, password) VALUES (?, ?)",
-      [email, password],
-      (err, result) => {
-        if (err) {
-          console.error(err);
-          return res.status(500).json({ error: "Database error" });
-        }
-        const id = result.insertId;
-        return res.json({ id: id, email: email });
+  conn.query(
+    "SELECT * FROM users WHERE email = ?",
+    [email],
+    async (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).send("Błąd serwera");
       }
-    );
-  });
+
+      if (results.length > 0) {
+        return res.status(400).send("Użytkownik o takim e-mailu już istnieje");
+      }
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      conn.query(
+        "INSERT INTO USERS (email, password) VALUES (?, ?)",
+        [email, hashedPassword],
+        (err, result) => {
+          if (err) {
+            console.error(err);
+            return res.status(500).json({ error: "Database error" });
+          }
+          const id = result.insertId;
+          const token = jwt.sign({ id, email }, process.env.JWT_SECRET, {
+            expiresIn: "1h",
+          });
+
+          return res.json({ token });
+        }
+      );
+    }
+  );
 });
 
 //KOSZYK
 
-app.post("/add-to-cart", (req, res) => {
+app.post("/add-to-cart", authenticateToken, (req, res) => {
   console.log("Dane z ciała zapytania:", req.body);
 
-  const { userID, productID, quantity } = req.body;
-  console.log(userID);
-  console.log(productID);
-  console.log(quantity);
+  const { productID, quantity } = req.body;
+  const userID = req.user.id;
+
   if (!userID) {
     return res.status(400).json({ error: "Brak ID użytkownika" });
   }
@@ -154,8 +204,8 @@ function addItemToCart(cartId, productId, quantity, res) {
   );
 }
 
-app.get("/cart/:userId", (req, res) => {
-  const userId = req.params.userId;
+app.get("/cart", authenticateToken, (req, res) => {
+  const userId = req.user.id;
 
   conn.query(
     `
@@ -173,8 +223,17 @@ app.get("/cart/:userId", (req, res) => {
   );
 });
 
-app.post("/cart/makeReservation", (req, res) => {
-  const { userID, carID, start_date, end_date, status, comments } = req.body;
+app.post("/cart/makeReservation", authenticateToken, (req, res) => {
+  const { carID, start_date, end_date, status, comments } = req.body;
+  const userID = req.user.id;
+  console.log("Rezerwacja dane wejściowe:", {
+    carID,
+    start_date,
+    end_date,
+    status,
+    comments,
+    userID,
+  });
   console.log(req.body);
   conn.query(
     `SELECT * from reservations where car_id = ?`,
@@ -189,12 +248,13 @@ app.post("/cart/makeReservation", (req, res) => {
         `INSERT INTO reservations (user_id, car_id, start_date, end_date, status, comments)
     VALUES (?, ?, ?, ?, ?, ?)`,
         [userID, carID, start_date, end_date, status, comments],
-        (err) => {
+        (err, result) => {
           if (err) {
             return res
               .status(500)
               .send("Błąd podczas dodawania przedmiotu do koszyka");
           }
+          console.log("Rezerwacja została pomyślnie dodana:", result);
           res.status(200).json({ message: "Rezerwacja zostala wyslana" });
         }
       );
@@ -202,14 +262,15 @@ app.post("/cart/makeReservation", (req, res) => {
   );
 });
 
-app.get("/reservation/:userId", (req, res) => {
-  const userId = req.params.userId;
+app.get("/reservation", authenticateToken, (req, res) => {
+  const userId = req.user.id;
   console.log(userId);
   conn.query(
     `SELECT * from reservations WHERE user_id = ?`,
     [userId],
     (err, result) => {
       if (err) return res.status(500).send("Błąd serwera");
+      console.log("Reservation query result:", result);
       res.json(result);
     }
   );
@@ -225,8 +286,8 @@ app.get("/cars/:carID", (req, res) => {
   });
 });
 
-app.delete("/cart/clear/:userID", (req, res) => {
-  const userID = req.params.userID;
+app.delete("/cart/clear", authenticateToken, (req, res) => {
+  const userID = req.user.id;
 
   const query = `DELETE FROM cart_items WHERE cart_id IN (SELECT id FROM carts WHERE user_id = ?)`;
 

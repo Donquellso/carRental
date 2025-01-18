@@ -1,0 +1,577 @@
+body {
+  margin: 0;
+  font-family: "Merriweather", serif;
+}
+#all {
+  display: flex;
+  flex-direction: column;
+}
+#content {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  width: 75vw;
+  background-color: #f8f9fa;
+}
+#top {
+  height: 70px;
+  width: 100%;
+  background-color: whitesmoke;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+#top > ul {
+  display: flex;
+  justify-content: center;
+  gap: 50px;
+  list-style: none;
+  align-items: center;
+  margin: 0px;
+  cursor: pointer;
+}
+.popup {
+  position: fixed;
+  z-index: 3;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  visibility: hidden;
+  opacity: 0;
+}
+.popup-show {
+  opacity: 1;
+  visibility: visible;
+}
+.popup-content > h2 {
+  margin: 0;
+}
+#registerForm,
+#loginForm,
+#passw,
+#ema {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+#loginForm input:nth-of-type(1),
+#registerForm input:nth-of-type(1) {
+  margin-bottom: 10px;
+}
+#registerForm > span > input,
+#loginForm > input {
+  width: 200px;
+  height: 20px;
+}
+
+.register-close-btn,
+.login-close-btn {
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  top: 5px;
+}
+.popup-content {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 260px;
+  height: 280px;
+}
+
+.popup-content > h2,
+.popup-content > form {
+  margin-bottom: 15px;
+}
+#alracc {
+  font-size: 12px;
+  margin-top: 13px;
+}
+#alracc > a {
+  color: blue;
+  cursor: pointer;
+}
+.popup-content > button {
+  width: 200px;
+  height: 25px;
+}
+body {
+  background-color: gray;
+}
+.body-home {
+  position: relative;
+  height: 95vh;
+  background: url("/img/car-rent.jpg") no-repeat center center;
+  background-size: cover;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#bottom {
+  width: 100%;
+  height: 70vh;
+}
+#stopka {
+  width: 100%;
+  height: 8vh;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+.offer {
+  position: absolute;
+  left: 40%;
+  top: 200px;
+  width: auto;
+  height: auto;
+  padding: 6px;
+  font-size: 26px;
+  background-color: rgba(128, 128, 128, 0.7);
+  transition: background-color 0.3s, text-decoration 0.3s;
+  cursor: pointer;
+}
+.offer:hover {
+  background-color: rgba(128, 128, 128, 0.8);
+  text-decoration: underline;
+}
+
+.cars {
+  background-color: whitesmoke;
+  width: auto;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 50px;
+  padding: 75px;
+  justify-content: space-between;
+  height: auto;
+}
+.hidden {
+  display: none !important;
+}
+#signerrorMessage {
+  color: red;
+}
+.carDiv {
+  width: 400px;
+  height: 400px;
+  text-align: center;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+#carimg {
+  max-width: 50%;
+  max-height: 50%;
+  object-fit: contain;
+}
+.carPopupContent {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  border: 1px solid black;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  width: 700px;
+  height: 600px;
+  font-family: Arial, sans-serif;
+}
+
+#car-close-btn {
+  position: absolute;
+  top: 5px;
+  right: 10px;
+}
+.carDetails > img {
+  width: 50%;
+  height: 50%;
+  object-fit: contain;
+}
+.carPopupContent > span > img {
+  width: 50%;
+  height: 50%;
+  object-fit: contain;
+}
+.cartContent {
+  background-color: whitesmoke;
+  width: 65vw;
+  height: 95vh;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.cartItems {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background-color: lightgray;
+}
+.cart {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  height: 20%;
+  width: 100%;
+}
+.fa-trash-can {
+  position: absolute;
+  right: 25px;
+  top: 20px;
+}
+.reservationContent {
+  background-color: whitesmoke;
+  width: 65vw;
+  height: 95vh;
+  padding: 50px;
+}
+.reservation-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.reservation-form > input {
+  width: 10vw;
+  height: 3vh;
+}
+.reserve-btn {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 14vw;
+  height: 4.5vh;
+}
+
+/* Prosta struktura dla sekcji "About" */
+.about {
+  font-family: "Arial", sans-serif;
+  background-color: whitesmoke;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.about-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.about-header h1 {
+  font-size: 2.5em;
+  color: #333;
+}
+
+.about-header p {
+  font-size: 1.1em;
+  color: #555;
+}
+
+.about-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.about-text {
+  width: 60%;
+  padding-right: 20px;
+}
+
+.about-text h2 {
+  font-size: 2em;
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.about-image img {
+  width: 100%;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.our-values {
+  text-align: center;
+  margin-top: 50px;
+}
+
+.our-values h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.our-values ul {
+  display: flex;
+  justify-content: center;
+  list-style-type: none;
+  padding: 0;
+}
+
+.our-values li {
+  font-size: 1.2em;
+  margin: 0 20px;
+  color: #555;
+}
+
+.our-values li i {
+  margin-right: 10px;
+}
+/* Główna sekcja kontaktowa */
+.contact {
+  padding: 50px 10%;
+  background-color: #f8f9fa;
+  color: #333;
+  font-family: Arial, sans-serif;
+}
+
+.contact h1 {
+  font-size: 2.5rem;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.contact p {
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: 40px;
+  line-height: 1.6;
+}
+
+/* Kontener sekcji */
+.contact-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+/* Formularz kontaktowy */
+.contact-form {
+  flex: 1 1 45%;
+  max-width: 500px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.contact-form label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: bold;
+}
+
+.contact-form input,
+.contact-form textarea {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.contact-form input:focus,
+.contact-form textarea:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.contact-form .submit-btn {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.contact-form .submit-btn:hover {
+  background-color: #0056b3;
+}
+
+/* Informacje kontaktowe */
+.contact-info {
+  flex: 1 1 45%;
+  max-width: 500px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.contact-info h2 {
+  text-align: center;
+  margin-bottom: 15px;
+  font-size: 1.5rem;
+  color: #007bff;
+}
+
+.contact-info p {
+  margin: 10px 0;
+  font-size: 1rem;
+  color: #333;
+}
+
+/* Ogólny styl panelu użytkownika */
+.panel {
+  padding: 20px 10%;
+  background-color: #f9f9f9;
+  font-family: Arial, sans-serif;
+}
+
+.panel h2 {
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Styl listy rezerwacji */
+.reservation-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+}
+
+.reservation-list p {
+  font-size: 1rem;
+  color: #666;
+  text-align: center;
+}
+
+/* Styl karty rezerwacji */
+.reservation-card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  width: 100%;
+  max-width: 800px;
+  padding: 20px;
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Informacje o samochodzie */
+.car-info {
+  display: flex;
+  gap: 15px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.car-image {
+  width: 150px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+}
+
+.car-info h3 {
+  font-size: 1.5rem;
+  color: #333;
+  margin: 0;
+}
+
+.car-info p {
+  font-size: 0.9rem;
+  color: #555;
+  margin: 5px 0;
+}
+
+/* Szczegóły rezerwacji */
+.reservation-details {
+  width: 100%;
+}
+
+.reservation-details p {
+  font-size: 1rem;
+  margin: 8px 0;
+  color: #444;
+}
+
+.reservation-details p strong {
+  color: #007bff;
+}
+
+/* Styl dla uwag (opcjonalnie) */
+.reservation-details p:nth-child(4) {
+  font-style: italic;
+  color: #555;
+}
+
+.popup-message {
+  margin-top: 10px;
+  font-size: 1rem;
+  color: green;
+  font-weight: bold;
+}
+.carDiv .details {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 14vw;
+  height: 2.7vh;
+}
+.carPopupContent .details {
+  display: inline-block;
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 7px;
+  cursor: pointer;
+  width: 15vw;
+  height: 4.5vh;
+}
+.carPopupContent h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+#carimg {
+  width: 100%;
+  height: auto;
+  margin: 15px 0;
+  border-radius: 4px;
+}
+.carPopupContent p {
+  font-size: 1rem;
+  margin: 5px 0;
+}

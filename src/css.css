@@ -269,7 +269,6 @@ body {
   height: 4.5vh;
 }
 
-/* Prosta struktura dla sekcji "About" */
 .about {
   font-family: "Arial", sans-serif;
   background-color: whitesmoke;
@@ -344,7 +343,6 @@ body {
 .our-values li i {
   margin-right: 10px;
 }
-/* Główna sekcja kontaktowa */
 .contact {
   padding: 50px 10%;
   background-color: #f8f9fa;
@@ -365,7 +363,6 @@ body {
   line-height: 1.6;
 }
 
-/* Kontener sekcji */
 .contact-container {
   display: flex;
   flex-wrap: wrap;
@@ -373,7 +370,6 @@ body {
   justify-content: center;
 }
 
-/* Formularz kontaktowy */
 .contact-form {
   flex: 1 1 45%;
   max-width: 500px;
@@ -419,7 +415,6 @@ body {
   background-color: #0056b3;
 }
 
-/* Informacje kontaktowe */
 .contact-info {
   flex: 1 1 45%;
   max-width: 500px;
@@ -442,7 +437,6 @@ body {
   color: #333;
 }
 
-/* Ogólny styl panelu użytkownika */
 .panel {
   padding: 20px 10%;
   background-color: #f9f9f9;
@@ -456,7 +450,6 @@ body {
   color: #333;
 }
 
-/* Styl listy rezerwacji */
 .reservation-list {
   display: flex;
   flex-wrap: wrap;
@@ -470,7 +463,6 @@ body {
   text-align: center;
 }
 
-/* Styl karty rezerwacji */
 .reservation-card {
   display: flex;
   flex-wrap: wrap;
@@ -483,7 +475,6 @@ body {
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Informacje o samochodzie */
 .car-info {
   display: flex;
   gap: 15px;
@@ -511,7 +502,6 @@ body {
   margin: 5px 0;
 }
 
-/* Szczegóły rezerwacji */
 .reservation-details {
   width: 100%;
 }
@@ -526,7 +516,6 @@ body {
   color: #007bff;
 }
 
-/* Styl dla uwag (opcjonalnie) */
 .reservation-details p:nth-child(4) {
   font-style: italic;
   color: #555;

@@ -63,7 +63,7 @@ export const initPopups = () => {
     errorMessage.textContent = "";
     const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!pattern.test(email.value)) {
-      errorMessage.textContent = "Invalid email";
+      errorMessage.textContent = "Nieprawidłowy email";
       return;
     }
     if (email.value && signpassw.classList.contains("hidden")) {

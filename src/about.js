@@ -1,12 +1,7 @@
-// Funkcja generująca zawartość strony "About"
 export function loadAbout() {
   const content = document.getElementById("content");
-
-  // Tworzymy sekcję About
   const aboutSection = document.createElement("div");
   aboutSection.classList.add("about");
-
-  // Nagłówek strony "About"
   const aboutHeader = document.createElement("div");
   aboutHeader.classList.add("about-header");
   aboutHeader.innerHTML = `
@@ -15,12 +10,9 @@ export function loadAbout() {
     `;
 
   aboutSection.appendChild(aboutHeader);
-
-  // Tworzymy kontener z treścią (tekst + obrazek)
   const aboutContent = document.createElement("div");
   aboutContent.classList.add("about-content");
 
-  // Część z tekstem
   const aboutText = document.createElement("div");
   aboutText.classList.add("about-text");
   aboutText.innerHTML = `
@@ -30,13 +22,9 @@ export function loadAbout() {
       <p>Naszym celem jest pomaganie klientom w osiąganiu ich celów poprzez dostarczanie innowacyjnych i sprawdzonych rozwiązań. Zawsze stawiamy na jakość i profesjonalizm.</p>
     `;
 
-  // Część z obrazkiem (można zmienić na własny obrazek w projekcie)
-
-  // Dodajemy tekst i obrazek do kontenera
   aboutContent.appendChild(aboutText);
   aboutSection.appendChild(aboutContent);
 
-  // Nasze wartości (list)
   const ourValues = document.createElement("div");
   ourValues.classList.add("our-values");
   ourValues.innerHTML = `
@@ -50,7 +38,6 @@ export function loadAbout() {
     `;
   aboutSection.appendChild(ourValues);
 
-  // Przypisujemy zawartość do głównego kontenera (do elementu "content")
-  content.innerHTML = ""; // Usuwamy poprzednią zawartość
+  content.innerHTML = "";
   content.appendChild(aboutSection);
 }

@@ -1,8 +1,7 @@
 export function loadContact() {
   const content = document.getElementById("content");
-  content.innerHTML = ""; // Wyczyść poprzednią zawartość
+  content.innerHTML = "";
 
-  // Stwórz główny kontener kontaktu
   const contactSection = document.createElement("div");
   contactSection.classList.add("contact");
 

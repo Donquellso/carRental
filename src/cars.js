@@ -63,8 +63,8 @@ export function loadCars() {
       `;
 
     const message = document.createElement("p");
-    message.id = "popup-message"; // Identyfikator do aktualizowania treści
-    message.classList.add("popup-message"); // Stylizowanie CSS
+    message.id = "popup-message";
+    message.classList.add("popup-message");
     message.textContent = "";
 
     const button = document.createElement("button");

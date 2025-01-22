@@ -72,9 +72,8 @@ export async function displayCart() {
   if (cartItems.length === 0) {
     const emptyMessage = document.createElement("p");
     emptyMessage.textContent = "Koszyk jest pusty.";
-    cartContent.appendChild(emptyMessage); // Dodaj komunikat o pustym koszyku
+    cartContent.appendChild(emptyMessage);
   } else {
-    // Formularz do wprowadzenia daty rezerwacji
     const reservationForm = document.createElement("form");
     reservationForm.classList.add("reservation-form");
 
@@ -105,12 +104,11 @@ export async function displayCart() {
         
       `;
 
-      // Usuwanie przedmiotu (event listener na przycisk usuwania)
       itemDiv
         .querySelector(".delete-item")
         .addEventListener("click", async () => {
-          await deleteCartItem(item.product_id); // Funkcja do usuwania przedmiotów
-          displayCart(); // Odśwież zawartość koszyka
+          await deleteCartItem(item.product_id);
+          displayCart();
         });
 
       cartItemsContainer.appendChild(itemDiv);
@@ -118,12 +116,10 @@ export async function displayCart() {
 
     cartContent.appendChild(cartItemsContainer);
 
-    // Dodanie przycisku do finalizowania rezerwacji
     const reserveButton = document.createElement("button");
     reserveButton.textContent = "Potwierdź rezerwację";
     reserveButton.classList.add("reserve-btn");
 
-    // Obsługa przycisku do rezerwacji
     reserveButton.addEventListener("click", async (event) => {
       event.preventDefault();
 
@@ -131,13 +127,11 @@ export async function displayCart() {
       const endDate = reservationForm.querySelector("#endDate").value;
       const comments = reservationForm.querySelector("#comments").value;
 
-      // Pobranie dzisiejszej daty
       if (!startDate || !endDate) {
         alert("Proszę uzupełnić datę rozpoczęcia i zakończenia rezerwacji.");
         return;
       }
 
-      // Tworzymy rezerwację dla każdego przedmiotu z koszyka
       for (const item of cartItems) {
         await makeReservation({
           carID: item.product_id,
@@ -148,25 +142,22 @@ export async function displayCart() {
         });
       }
 
-      // Wyczyszczenie koszyka po rezerwacji
       await clearCart();
 
       alert(
         "Rezerwacja została pomyślnie dodana i koszyk został wyczyszczony!"
       );
-      displayCart(); // Odśwież zawartość po rezerwacji i wyczyszczeniu koszyka
+      displayCart();
     });
     if (cartItems.length > 0) {
-      cartContent.appendChild(reserveButton); // Dodanie przycisku na koniec
+      cartContent.appendChild(reserveButton);
     }
   }
   content.innerHTML = "";
   content.appendChild(cartContent);
 }
-// Funkcja do usuwania przedmiotu z koszyka
 async function deleteCartItem(productId) {
   try {
-    // Wywołanie endpointu do usunięcia przedmiotu z koszyka
     const response = await fetch(
       `http://localhost:3000/cart/removeItem/${productId}`,
       {
@@ -179,9 +170,8 @@ async function deleteCartItem(productId) {
 
     const result = await response.json();
     if (response.ok) {
-      // Jeżeli usunięcie przebiegło pomyślnie, poinformuj użytkownika
       console.log(`Przedmiot o ID ${productId} został usunięty z koszyka.`);
-      return result; // Można zwrócić wynik, jeśli chcesz na coś reagować
+      return result;
     } else {
       throw new Error(
         result.message || "Wystąpił problem podczas usuwania przedmiotu."
@@ -200,7 +190,7 @@ async function clearCart() {
   await fetch(`http://localhost:3000/cart/clear`, {
     method: "DELETE",
     headers: {
-      Authorization: `Bearer ${token}`, // Dodanie tokena do nagłówków
+      Authorization: `Bearer ${token}`,
     },
   })
     .then((response) => {

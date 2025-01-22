@@ -39,18 +39,16 @@ app.get("/cars", (req, res) => {
 
 //LOGOWANIE I REJESTRACJA
 
-// Middleware do weryfikacji tokena
 function authenticateToken(req, res, next) {
-  const authHeader = req.headers["authorization"]; // Pobierz nagłówek "Authorization"
-  const token = authHeader && authHeader.split(" ")[1]; // Usuń "Bearer" i pobierz sam token
+  const authHeader = req.headers["authorization"];
+  const token = authHeader && authHeader.split(" ")[1];
 
-  if (!token) return res.status(401).json({ error: "Brak tokena" }); // Jeśli brak tokena, zwróć 401
+  if (!token) return res.status(401).json({ error: "Brak tokena" });
 
-  // Weryfikacja tokena za pomocą JWT_SECRET
   jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-    if (err) return res.status(403).json({ error: "Nieprawidłowy token" }); // Jeśli token jest niepoprawny, zwróć 403
-    req.user = user; // Przechowaj zweryfikowanego użytkownika w req.user
-    next(); // Przejdź do kolejnej funkcji
+    if (err) return res.status(403).json({ error: "Nieprawidłowy token" });
+    req.user = user;
+    next();
   });
 }
 
@@ -299,11 +297,9 @@ app.delete("/cart/clear", authenticateToken, (req, res) => {
   });
 });
 
-// Usunięcie pojedynczego przedmiotu z koszyka
 app.delete("/cart/removeItem/:productId", (req, res) => {
   const productId = req.params.productId;
 
-  // Kwerenda SQL do usunięcia przedmiotu o podanym product_id z cart_items
   const query = `DELETE FROM cart_items WHERE product_id = ?`;
 
   conn.query(query, [productId], (err, result) => {
@@ -312,7 +308,6 @@ app.delete("/cart/removeItem/:productId", (req, res) => {
       return res.status(500).json({ message: "Błąd serwera" });
     }
 
-    // Jeżeli przedmiot został usunięty
     if (result.affectedRows > 0) {
       return res
         .status(200)

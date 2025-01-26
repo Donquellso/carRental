@@ -86,7 +86,6 @@ export async function displayUserPanel() {
       reservationCard.classList.add("reservation-card");
 
       const formattedStart = reservation.start_date.split("T")[0];
-      const formattedEnd = reservation.end_date.split("T")[0];
 
       reservationCard.innerHTML = `
         <div class="car-info">
@@ -110,7 +109,7 @@ export async function displayUserPanel() {
           </div>
         </div>
         <div class="reservation-details">
-          <p><strong>Rezerwacja:</strong> ${formattedStart} - ${formattedEnd}</p>
+          <p><strong>Rezerwacja:</strong> ${formattedStart}</p>
           <p><strong>Status:</strong> ${reservation.status}</p>
           ${
             reservation.comments

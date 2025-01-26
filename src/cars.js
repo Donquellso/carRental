@@ -28,7 +28,6 @@ export function loadCars() {
       carDiv.innerHTML = `
   <h3 id="${element.id}" class="car-title">${element.brand} ${element.model} (${element.year})</h3>
     <img src="${element.image_url}" class="car-image">
-    <p><strong>Rodzaj paliwa:</strong> ${element.engine_type}</p>
     <p><strong>Cena od:</strong> ${element.price_per_day} zł</p>
     <a class="details">Sprawdź szczegóły</a>
 `;
@@ -52,7 +51,9 @@ export function loadCars() {
     popupcontent.innerHTML = "";
     popupcontent.appendChild(closeButton);
     let findCar = carsTab.find((car) => car.id == carID);
+    console.log(findCar);
     const details = document.createElement("span");
+    details.classList.add("popupdetails");
     details.innerHTML = `<h3 class="car-title">${findCar.brand} ${findCar.model} (${findCar.year})</h3>
       <img src="${findCar.image_url}" id="carimg" class="car-image">
         <p><strong>Rodzaj paliwa:</strong> ${findCar.engine_type}</p>

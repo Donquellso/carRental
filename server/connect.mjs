@@ -222,36 +222,52 @@ app.get("/cart", authenticateToken, (req, res) => {
 });
 
 app.post("/cart/makeReservation", authenticateToken, (req, res) => {
-  const { carID, start_date, end_date, status, comments } = req.body;
+  const { carID, start_date, status, comments } = req.body;
   const userID = req.user.id;
   console.log("Rezerwacja dane wejściowe:", {
     carID,
     start_date,
-    end_date,
     status,
     comments,
     userID,
   });
   console.log(req.body);
   conn.query(
-    `SELECT * from reservations where car_id = ?`,
-    [carID],
+    `SELECT * from reservations where car_id = ? AND user_id = ?`,
+    [carID, userID],
     (err, result) => {
-      if (err) return res.status(500).send("Błąd serwera");
-
+      if (err) {
+        console.error("Błąd serwera podczas sprawdzania rezerwacji:", err);
+        return res.status(500).json({ error: "Błąd serwera" });
+      }
       if (result.length > 0) {
         return res.status(400).send("Auto jest juz zarezerwowane");
       }
       conn.query(
         `INSERT INTO reservations (user_id, car_id, start_date, end_date, status, comments)
-    VALUES (?, ?, ?, ?, ?, ?)`,
-        [userID, carID, start_date, end_date, status, comments],
+    VALUES (?, ?, ?, NULL, ?, ?)`,
+        [userID, carID, start_date, status, comments],
         (err, result) => {
           if (err) {
             return res
               .status(500)
               .send("Błąd podczas dodawania przedmiotu do koszyka");
           }
+          conn.query(
+            `DELETE FROM available_dates WHERE car_id = ? AND available_date = ?`,
+            [carID, start_date],
+            (err, deleteResult) => {
+              if (err) {
+                console.error(
+                  "Błąd podczas usuwania dostępnej daty z tabeli:",
+                  err
+                );
+                return res.status(500).send("Błąd serwera");
+              }
+
+              console.log("Usunięto datę z dostępnych dat:", deleteResult);
+            }
+          );
           console.log("Rezerwacja została pomyślnie dodana:", result);
           res.status(200).json({ message: "Rezerwacja zostala wyslana" });
         }
@@ -318,6 +334,28 @@ app.delete("/cart/removeItem/:productId", (req, res) => {
         .json({ message: "Nie znaleziono przedmiotu w koszyku" });
     }
   });
+});
+app.get("/cars/:carID/available-dates", authenticateToken, (req, res) => {
+  const carID = req.params.carID;
+
+  conn.query(
+    `SELECT available_date FROM available_dates WHERE car_id = ? ORDER BY available_date ASC`,
+    [carID],
+    (err, result) => {
+      if (err) {
+        console.error("Błąd podczas pobierania dostępnych dat:", err);
+        return res.status(500).json({ message: "Błąd serwera" });
+      }
+
+      if (result.length === 0) {
+        return res
+          .status(404)
+          .json({ message: "Brak dostępnych dat dla tego samochodu." });
+      }
+
+      res.json(result.map((row) => row.available_date));
+    }
+  );
 });
 //HOST
 app.listen(3000, () => {

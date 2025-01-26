@@ -1,5 +1,6 @@
 import { makeReservation } from "./reservation.js";
-
+import flatpickr from "flatpickr";
+import "flatpickr/dist/flatpickr.min.css";
 export function cartItem(productID) {
   const token = localStorage.getItem("token");
   if (!token) {
@@ -59,6 +60,7 @@ async function getCart() {
   }
 }
 export async function displayCart() {
+  getDates(1);
   const content = document.getElementById("content");
 
   const cartContent = document.createElement("div");
@@ -74,32 +76,15 @@ export async function displayCart() {
     emptyMessage.textContent = "Koszyk jest pusty.";
     cartContent.appendChild(emptyMessage);
   } else {
-    const reservationForm = document.createElement("form");
-    reservationForm.classList.add("reservation-form");
-
-    reservationForm.innerHTML = `
-    <h3>Wprowadź daty rezerwacji</h3>
-    <label for="startDate">Data rozpoczęcia:</label>
-    <input type="date" id="startDate" name="startDate" required />
-
-    <label for="endDate">Data zakończenia:</label>
-    <input type="date" id="endDate" name="endDate" required />
-
-    <label for="comments">Uwagi (opcjonalnie):</label>
-    <textarea id="comments" name="comments" rows="4" style="resize: none;"></textarea>
-  `;
-    cartContent.appendChild(reservationForm);
-    const cartItemsContainer = document.createElement("div");
-    cartItemsContainer.classList.add("cart-items-container");
-
     cartItems.forEach((item) => {
+      const cartItemsContainer = document.createElement("div");
+      cartItemsContainer.classList.add("cart-items-container");
       const itemDiv = document.createElement("div");
       itemDiv.classList.add("cartItems");
-
       itemDiv.innerHTML = `
         <p><strong>${item.brand}</strong></p>
         <p>Cena za dzień: ${item.price_per_day} zł</p>
-        <p>Ilość: ${item.quantity}</p>
+        <p>Dni: ${item.quantity}</p>
           <i class="fa-solid fa-trash-can delete-item"></i> 
         
       `;
@@ -110,11 +95,29 @@ export async function displayCart() {
           await deleteCartItem(item.product_id);
           displayCart();
         });
+      const reservationForm = document.createElement("form");
+      reservationForm.classList.add("reservation-form");
 
+      reservationForm.innerHTML = `
+        <label for="startDate">Data rezerwacji:</label>
+        <input type="text" class="startDate" name="startDate" placeholder="Wprowadź datę" required />
+    
+    
+        <label for="comments">Uwagi (opcjonalnie):</label>
+        <textarea id="comments" name="comments" rows="4" style="resize: none;"></textarea>
+      `;
+      setTimeout(async () => {
+        let dates = await getDates(item.product_id);
+        console.log("orzel", dates);
+        flatpickr(reservationForm.querySelector(".startDate"), {
+          enable: dates,
+          dateFormat: "Y-m-d",
+        });
+      }, 0);
       cartItemsContainer.appendChild(itemDiv);
+      cartContent.appendChild(cartItemsContainer);
+      cartContent.appendChild(reservationForm);
     });
-
-    cartContent.appendChild(cartItemsContainer);
 
     const reserveButton = document.createElement("button");
     reserveButton.textContent = "Potwierdź rezerwację";
@@ -123,12 +126,11 @@ export async function displayCart() {
     reserveButton.addEventListener("click", async (event) => {
       event.preventDefault();
 
-      const startDate = reservationForm.querySelector("#startDate").value;
-      const endDate = reservationForm.querySelector("#endDate").value;
-      const comments = reservationForm.querySelector("#comments").value;
+      const startDate = document.querySelector(".startDate").value;
+      const comments = document.querySelector("#comments").value;
 
-      if (!startDate || !endDate) {
-        alert("Proszę uzupełnić datę rozpoczęcia i zakończenia rezerwacji.");
+      if (!startDate) {
+        alert("Proszę uzupełnić datę rezerwacji.");
         return;
       }
 
@@ -136,7 +138,6 @@ export async function displayCart() {
         await makeReservation({
           carID: item.product_id,
           start_date: startDate,
-          end_date: endDate,
           comments: comments,
           status: "pending",
         });
@@ -156,6 +157,34 @@ export async function displayCart() {
   content.innerHTML = "";
   content.appendChild(cartContent);
 }
+async function getDates(carID) {
+  console.log("EAGLE?");
+  try {
+    const response = await fetch(
+      `http://localhost:3000/cars/${carID}/available-dates`,
+      {
+        method: "get",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+
+    const result = await response.json();
+    if (response.ok) {
+      return result.length > 0 ? result : [];
+    } else {
+      throw new Error(
+        result.message || "Wystąpił problem podczas pobierania dat z serwera"
+      );
+    }
+  } catch (error) {
+    console.error("Błąd: ", error);
+    return [];
+  }
+}
+
 async function deleteCartItem(productId) {
   try {
     const response = await fetch(

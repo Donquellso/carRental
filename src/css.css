@@ -10,6 +10,7 @@ body {
   position: relative;
   margin-left: auto;
   margin-right: auto;
+  height: 100%;
   width: 75vw;
   background-color: #f8f9fa;
 }
@@ -168,7 +169,7 @@ body {
   width: auto;
   display: flex;
   flex-wrap: wrap;
-  gap: 50px;
+  gap: 30px;
   padding: 75px;
   justify-content: space-between;
   height: auto;
@@ -261,10 +262,11 @@ body {
   position: absolute;
   right: 25px;
   top: 30px;
-  transition: color 0.3s ease;
+  transition: color 0.3s ease, transform 0.3s ease;
 }
 .delete-item:hover {
   color: #c0392b;
+  transform: scale(1.20);
 }
 .cart {
   display: flex;
@@ -299,6 +301,11 @@ body {
   cursor: pointer;
   width: 14vw;
   height: 4.5vh;
+  transition: transform 0.3s ease, border-radius 0.3s ease;
+}
+.reserve-btn:hover{
+  transform: scale(1.02);
+  border-radius: 10px;
 }
 
 .about {
@@ -485,7 +492,7 @@ body {
 .reservation-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 50px;
   justify-content: center;
 }
 

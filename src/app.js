@@ -6,7 +6,6 @@ import { displayUserPanel } from "./reservation.js";
 import { loadAbout } from "./about.js";
 import { loadContact } from "./contact.js";
 import { jwtDecode } from "jwt-decode";
-import flatpickr from "flatpickr";
 import "./css.css";
 document.addEventListener("DOMContentLoaded", initSite);
 function initSite() {
